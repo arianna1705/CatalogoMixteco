@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión</title>
+  <link rel="stylesheet" href="/static/css/estilos.css">
+</head>
+
+<body>
+  <div class="background"></div>
+  <div class="card">
+    <img class="logo" src="images.png" alt="Logo">
+    <h4>¡Bienvenidos!</h4>
+    <form class="form" id="loginForm">
+      <input type="email" id="correo" name="correo" placeholder="Correo electrónico" required>
+      <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña" required>
+      <button type="submit">Iniciar sesión</button>
+    </form>
+
+    <footer>
+      ¿No tienes una cuenta?
+      <a href="registrarse.html">Regístrate aquí</a>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  const formData = {
+    correo: document.getElementById('correo').value,
+    contrasena: document.getElementById('contrasena').value
+  };
+
+  fetch('/authenticate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'success') {
+      // Redirigir al index después de un inicio de sesión exitoso
+      window.location.href = '/index.html';  // Redirige al index
+    } else {
+      // Mostrar mensaje de error
+      alert('Correo o contraseña incorrectos');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Hubo un error al intentar iniciar sesión');
+  });
+});
+
+  </script>
+</body>
+
+</html>
+
+
+
