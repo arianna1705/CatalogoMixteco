@@ -94,7 +94,7 @@ def authenticate():
 
     if user:
         # Verificar que el usuario exista y la contraseña sea correcta
-        hashed_password = user[4]  # Asumiendo que el campo contrasena está en la posición 3
+        hashed_password = user[4]  
         if check_password_hash(hashed_password, contrasena):
             
             return redirect(url_for('index.html'))  

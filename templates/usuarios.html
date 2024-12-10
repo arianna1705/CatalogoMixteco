@@ -273,7 +273,6 @@
 				</div>
 			</nav>
 <!-- CRUD usuarios -->
- 
 <body>
     <div class="container py-5">
         <h2>Catálogo de Usuarios</h2>
@@ -295,8 +294,11 @@
                 <input type="password" id="contrasena" class="form-control" placeholder="Contraseña (máximo 11 caracteres)" maxlength="11" required>
             </div>
             <div class="mb-3">
-                <label for="id_rol" class="form-label">ID del Rol</label>
-                <input type="number" id="id_rol" class="form-control" placeholder="ID asociado al rol del usuario" required>
+                <label for="id_rol" class="form-label">Rol del Usuario</label>
+                <select id="id_rol" class="form-control" required>
+                    <option value="1">Administrador</option>
+                    <option value="2">Usuario</option>
+                </select>
             </div>
             <button type="submit" class="btn btn-success">Agregar</button>
         </form>
@@ -317,8 +319,11 @@
                 <input type="password" id="edit_contrasena" class="form-control" placeholder="Contraseña (máximo 11 caracteres)" maxlength="11" required>
             </div>
             <div class="mb-3">
-                <label for="edit_id_rol" class="form-label">ID del Rol</label>
-                <input type="number" id="edit_id_rol" class="form-control" placeholder="ID asociado al rol del usuario" required>
+                <label for="edit_id_rol" class="form-label">Rol del Usuario</label>
+                <select id="edit_id_rol" class="form-control" required>
+                    <option value="1">Administrador</option>
+                    <option value="2">Usuario</option>
+                </select>
             </div>
             <input type="hidden" id="edit_id_usuario">
             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
@@ -337,7 +342,7 @@
                     <th>Última Modificación</th>
                     <th>Usuario Mod.</th>
                     <th>Fecha Mov.</th>
-                    <th>ID Rol</th>
+                    <th>Rol</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -357,6 +362,7 @@
                 .then(res => res.json())
                 .then(data => {
                     data.forEach(usuario => {
+                        const rol = usuario.id_rol === 1 ? 'Administrador' : 'Usuario';
                         const fila = `
                             <tr>
                                 <td>${usuario.id_usuario}</td>
@@ -367,7 +373,7 @@
                                 <td>${usuario.ult_mod || 'N/A'}</td>
                                 <td>${usuario.usu_mod || 'N/A'}</td>
                                 <td>${usuario.fecha_mov || 'N/A'}</td>
-                                <td>${usuario.id_rol}</td>
+                                <td>${rol}</td>
                                 <td>
                                     <button class="btn btn-warning btn-sm" onclick="editarUsuario(${usuario.id_usuario})">Editar</button>
                                     <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(${usuario.id_usuario})">Eliminar</button>
