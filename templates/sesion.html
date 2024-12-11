@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar Sesión</title>
   <link rel="stylesheet" href="/static/css/estilos.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Asegúrate de tener SweetAlert2 -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Asegúrate de tener jQuery -->
 </head>
 
 <body>
@@ -26,37 +28,39 @@
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-  event.preventDefault();
+ 
+    // Función para manejar el inicio de sesión con AJAX
+    $("#loginForm").submit(function(event) {
+      event.preventDefault();
 
-  const formData = {
-    correo: document.getElementById('correo').value,
-    contrasena: document.getElementById('contrasena').value
-  };
+      const formData = {
+        correo: $("#correo").val(),
+        contrasena: $("#contrasena").val()
+      };
 
-  fetch('/authenticate', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(formData)
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.status === 'success') {
-      // Redirigir al index después de un inicio de sesión exitoso
-      window.location.href = '/index.html';  // Redirige al index
-    } else {
-      // Mostrar mensaje de error
-      alert('Correo o contraseña incorrectos');
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    alert('Hubo un error al intentar iniciar sesión');
-  });
-});
+      $.ajax({
+        url: '/authenticate',
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(formData),
+        success: function(response) {
+          if (response.status === 'success') {
+            Swal.fire('Éxito', 'Inicio de sesión exitoso', 'success').then(() => {
+              window.location.href = '/index.html'; // Redirige a la página principal
+            });
+          } else {
+            Swal.fire('Error', 'Correo o contraseña incorrectos', 'error');
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error("Error en la solicitud:", error);
+          Swal.fire('Error', 'Ocurrió un error en el servidor. Inténtalo más tarde.', 'error');
+        }
+      });
 
+      return false;
+    });
   </script>
 </body>
 

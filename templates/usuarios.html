@@ -58,7 +58,7 @@
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="registrar.html">
+						<a class="sidebar-link" href="sesion.html">
               <i class="align-middle" data-feather="user-plus"></i> <span class="align-middle">Sign Up</span>
             </a>
 					</li>
@@ -79,6 +79,7 @@
 						<a class="sidebar-link" href="usuarios.html">
               <i class="align-middle" data-feather="book"></i> <span class="align-middle">Usuarios</span>
             </a>
+					
 
 					<li class="sidebar-header">
 						Plugins & Addons
@@ -97,18 +98,7 @@
 					</li>
 				</ul>
 
-				<div class="sidebar-cta">
-					<div class="sidebar-cta-content">
-						<strong class="d-inline-block mb-2">Upgrade to Pro</strong>
-						<div class="mb-3 text-sm">
-							Are you looking for more components? Check out our premium version.
-						</div>
-						<div class="d-grid">
-							<a href="upgrade-to-pro.html" class="btn btn-primary">Upgrade to Pro</a>
-						</div>
-					</div>
-				</div>
-			</div>
+			
 		</nav>
 
 		<div class="main">
@@ -278,8 +268,11 @@
         <h2>Catálogo de Usuarios</h2>
         <p>Administra los usuarios del sistema</p>
 
+        <!-- Botón para mostrar el formulario de agregar usuario -->
+        <button id="btn-agregar" class="btn btn-primary mb-4">Agregar Usuario</button>
+
         <!-- Formulario para agregar usuarios -->
-        <form id="form-usuario" class="mb-4">
+        <form id="form-usuario" class="mb-4" style="display: none;">
             <h4>Añadir Usuario</h4>
             <div class="mb-3">
                 <label for="nom_usuario" class="form-label">Nombre del Usuario</label>
@@ -301,9 +294,10 @@
                 </select>
             </div>
             <button type="submit" class="btn btn-success">Agregar</button>
+            <button type="button" id="cancelar-agregar" class="btn btn-secondary">Cancelar</button>
         </form>
 
-        <!-- Formulario para editar usuarios (oculto sesionalmente) -->
+        <!-- Formulario para editar usuarios -->
         <form id="form-editar-usuario" class="mb-4" style="display: none;">
             <h4>Editar Usuario</h4>
             <div class="mb-3">
@@ -351,130 +345,131 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const tablaUsuarios = document.getElementById("tabla-usuarios");
-            const formUsuario = document.getElementById("form-usuario");
-            const formEditarUsuario = document.getElementById("form-editar-usuario");
-            const cancelarEditarBtn = document.getElementById("cancelar-editar");
+    document.addEventListener("DOMContentLoaded", () => {
+        const tablaUsuarios = document.getElementById("tabla-usuarios");
+        const formUsuario = document.getElementById("form-usuario");
+        const formEditarUsuario = document.getElementById("form-editar-usuario");
+        const cancelarEditarBtn = document.getElementById("cancelar-editar");
+        const btnAgregar = document.getElementById("btn-agregar");
+        const cancelarAgregarBtn = document.getElementById("cancelar-agregar");
 
-            // Cargar usuarios
-            fetch('/api/usuarios')
-                .then(res => res.json())
-                .then(data => {
-                    data.forEach(usuario => {
-                        const rol = usuario.id_rol === 1 ? 'Administrador' : 'Usuario';
-                        const fila = `
-                            <tr>
-                                <td>${usuario.id_usuario}</td>
-                                <td>${usuario.nom_usuario}</td>
-                                <td>${usuario.correo}</td>
-                                <td>${usuario.contrasena}</td>
-                                <td>${usuario.estatus === 1 ? 'Activo' : 'Inactivo'}</td>
-                                <td>${usuario.ult_mod || 'N/A'}</td>
-                                <td>${usuario.usu_mod || 'N/A'}</td>
-                                <td>${usuario.fecha_mov || 'N/A'}</td>
-                                <td>${rol}</td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm" onclick="editarUsuario(${usuario.id_usuario})">Editar</button>
-                                    <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(${usuario.id_usuario})">Eliminar</button>
-                                </td>
-                            </tr>
-                        `;
-                        tablaUsuarios.innerHTML += fila;
-                    });
-                });
-
-            // Agregar nuevo usuario
-            formUsuario.addEventListener("submit", e => {
-                e.preventDefault();
-
-                const nuevoUsuario = {
-                    nom_usuario: document.getElementById("nom_usuario").value,
-                    correo: document.getElementById("correo").value,
-                    contrasena: document.getElementById("contrasena").value,
-                    id_rol: document.getElementById("id_rol").value,
-                    usu_mod: "admin"
-                };
-
-                fetch('/api/usuarios', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(nuevoUsuario)
-                })
-                .then(res => res.json())
-                .then(data => {
-                    alert(data.message);
-                    location.reload(); // Recargar para reflejar los cambios
-                })
-                .catch(err => console.error(err));
-            });
-
-            // Función para editar usuario
-            function editarUsuario(id) {
-                fetch(`/api/usuarios/${id}`)
-                    .then(res => res.json())
-                    .then(usuario => {
-                        document.getElementById("edit_nom_usuario").value = usuario.nom_usuario;
-                        document.getElementById("edit_correo").value = usuario.correo;
-                        document.getElementById("edit_contrasena").value = usuario.contrasena;
-                        document.getElementById("edit_id_rol").value = usuario.id_rol;
-                        document.getElementById("edit_id_usuario").value = usuario.id_usuario;
-
-                        formUsuario.style.display = "none";
-                        formEditarUsuario.style.display = "block";
-                    })
-                    .catch(err => console.error(err));
-            }
-
-            // Guardar cambios de edición
-            formEditarUsuario.addEventListener("submit", e => {
-                e.preventDefault();
-
-                const usuarioEditado = {
-                    id_usuario: document.getElementById("edit_id_usuario").value,
-                    nom_usuario: document.getElementById("edit_nom_usuario").value,
-                    correo: document.getElementById("edit_correo").value,
-                    contrasena: document.getElementById("edit_contrasena").value,
-                    id_rol: document.getElementById("edit_id_rol").value,
-                    usu_mod: "admin"
-                };
-
-                fetch(`/api/usuarios/${usuarioEditado.id_usuario}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(usuarioEditado)
-                })
-                .then(res => res.json())
-                .then(data => {
-                    alert(data.message);
-                    location.reload(); // Recargar para reflejar los cambios
-                })
-                .catch(err => console.error(err));
-            });
-
-            // Cancelar edición
-            cancelarEditarBtn.addEventListener("click", () => {
-                formUsuario.style.display = "block";
-                formEditarUsuario.style.display = "none";
-            });
+        // Mostrar el formulario de agregar usuario
+        btnAgregar.addEventListener("click", () => {
+            formUsuario.style.display = "block";
+            formEditarUsuario.style.display = "none";
         });
 
-        // Función para eliminar usuario
-        function eliminarUsuario(id) {
-            if (confirm('¿Estás seguro de eliminar este usuario?')) {
-                fetch(`/api/usuarios/${id}`, { method: 'DELETE' })
-                    .then(res => res.json())
-                    .then(data => {
-                        alert(data.message);
-                        location.reload();
-                    })
-                    .catch(err => console.error(err));
-            }
-        }
+        // Cargar usuarios
+        fetch('/api/usuarios')
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(usuario => {
+                    const rol = usuario.id_rol === 1 ? 'Administrador' : 'Usuario';
+                    const fila = `
+                        <tr>
+                            <td>${usuario.id_usuario}</td>
+                            <td>${usuario.nom_usuario}</td>
+                            <td>${usuario.correo}</td>
+                            <td>${usuario.contrasena}</td>
+                            <td>${usuario.estatus === 1 ? 'Activo' : 'Inactivo'}</td>
+                            <td>${usuario.ult_mod || 'N/A'}</td>
+                            <td>${usuario.usu_mod || 'N/A'}</td>
+                            <td>${usuario.fecha_mov || 'N/A'}</td>
+                            <td>${rol}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editarUsuario(${usuario.id_usuario})">Editar</button>
+                                <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(${usuario.id_usuario})">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                    tablaUsuarios.innerHTML += fila;
+                });
+            });
+
+        // Agregar nuevo usuario
+        formUsuario.addEventListener("submit", e => {
+            e.preventDefault();
+
+            const nuevoUsuario = {
+                nom_usuario: document.getElementById("nom_usuario").value,
+                correo: document.getElementById("correo").value,
+                contrasena: document.getElementById("contrasena").value,
+                id_rol: document.getElementById("id_rol").value,
+                usu_mod: "admin"
+            };
+
+            fetch('/api/usuarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(nuevoUsuario)
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                location.reload(); // Recargar para reflejar los cambios
+            })
+            .catch(err => console.error(err));
+        });
+
+        // Función para editar usuario
+        function editarUsuario(id) {
+    fetch(`/api/usuarios/${id}`)
+        .then(res => res.json())
+        .then(usuario => {
+            // Rellenar los campos del formulario con los datos del usuario
+            document.getElementById("edit_nom_usuario").value = usuario.nom_usuario;
+            document.getElementById("edit_correo").value = usuario.correo;
+            document.getElementById("edit_contrasena").value = usuario.contrasena;
+            document.getElementById("edit_id_rol").value = usuario.id_rol;
+            document.getElementById("edit_id_usuario").value = usuario.id_usuario;
+
+            // Mostrar formulario de edición y ocultar el de agregar
+            formUsuario.style.display = "none";
+            formEditarUsuario.style.display = "block";
+        })
+        .catch(err => console.error('Error al cargar usuario:', err));
+}
+
+
+        // Guardar cambios de edición
+        formEditarUsuario.addEventListener("submit", e => {
+            e.preventDefault();
+
+            const usuarioEditado = {
+                id_usuario: document.getElementById("edit_id_usuario").value,
+                nom_usuario: document.getElementById("edit_nom_usuario").value,
+                correo: document.getElementById("edit_correo").value,
+                contrasena: document.getElementById("edit_contrasena").value,
+                id_rol: document.getElementById("edit_id_rol").value,
+                usu_mod: "admin"
+            };
+
+            fetch(`/api/usuarios/${usuarioEditado.id_usuario}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(usuarioEditado)
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message); // Asegúrate de que el backend esté enviando un mensaje
+                location.reload(); // Recargar para reflejar los cambios
+            })
+            .catch(err => console.error(err));
+        });
+
+        // Cancelar agregar usuario
+        cancelarAgregarBtn.addEventListener("click", () => {
+            formUsuario.style.display = "none";
+        });
+
+        // Cancelar editar usuario
+        cancelarEditarBtn.addEventListener("click", () => {
+            formEditarUsuario.style.display = "none";
+        });
+    });
     </script>
 </body>
-
-			
+	
 	<script src="static/js/app.js"></script>
 
 </body>

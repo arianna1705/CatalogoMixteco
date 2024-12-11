@@ -2,8 +2,9 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from flask_sqlalchemy import SQLAlchemy
 from config import create_connection
 from models import db, Usuario, Nivelusuario
-from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 from datetime import datetime
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 
@@ -38,41 +39,41 @@ def perfil():
 def sesion():
     return render_template("sesion.html")
 
-
-@app.route('/registrarse.html')
+@app.route('/registrarse.html', methods=['POST'])
 def registrarse():
-    return render_template("registrarse.html")
-# Ruta para mostrar el formulario de registro (GET)
-@app.route('/registrarse', methods=['GET'])
-def mostrar_registro():
-    return render_template('registrarse.html')
-
-# Ruta para procesar el formulario de registro (POST)
-@app.route('/registrarse', methods=['POST'])
-def procesar_registro():
     data = request.get_json()
-    nombre = data.get('nombre')
-    correo = data.get('correo')
-    contrasena = data.get('contrasena')
 
-    # Hash de la contraseña para guardarla de forma segura
-    contrasena_hash = generate_password_hash(contrasena)
+    # Verificar que los datos estén presentes
+    if 'nombre' not in data or 'correo' not in data or 'contrasena' not in data:
+        return jsonify({'status': 'error', 'message': 'Faltan datos requeridos'}), 400
 
-    # Crear la conexión a la base de datos
-    connection = create_connection()
-    cursor = connection.cursor()
+    nombre = data['nombre']
+    correo = data['correo']
+    contrasena = data['contrasena']
+    
+    # Verificar si el correo ya está registrado
+    if Usuario.query.filter_by(correo=correo).first():
+        return jsonify({'status': 'error', 'message': 'El correo ya está registrado'}), 400
 
-    # Insertar el nuevo usuario en la base de datos
+    # Crear un nuevo usuario
+    nuevo_usuario = Usuario(
+        nom_usuario=nombre,
+        correo=correo,
+        contrasena=generate_password_hash(contrasena),  # Hashear la contraseña
+        estatus=1,  # Establecer el estatus como 1
+        usu_mod='Admin',  # Asigna el usuario que hace la modificación, si aplica
+        ult_mod='Creación',
+        fecha_mov=datetime.now(),  # Ajusta la fecha si lo necesitas
+        id_rol=1  # O cualquier rol que sea pertinente
+    )
+
     try:
-        cursor.execute("INSERT INTO usuarios (nom_usuario, correo, contrasena) VALUES (%s, %s, %s)", 
-                       (nombre, correo, contrasena_hash))  
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return jsonify({'status': 'success', 'message': 'Usuario registrado correctamente'})
+        db.session.add(nuevo_usuario)
+        db.session.commit()
+        return jsonify({'status': 'success'}), 200
     except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)})
-
+        db.session.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 # Ruta para mostrar el formulario de inicio de sesión
 @app.route('/sesion', methods=['GET'])
@@ -91,10 +92,11 @@ def authenticate():
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM usuarios WHERE correo = %s", (correo,))
     user = cursor.fetchone()
+    #print(user)
 
     if user:
         # Verificar que el usuario exista y la contraseña sea correcta
-        hashed_password = user[4]  
+        hashed_password = user[3]  
         if check_password_hash(hashed_password, contrasena):
             
             return redirect(url_for('index.html'))  
