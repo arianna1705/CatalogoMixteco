@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar Sesión</title>
-  <link rel="stylesheet" href="/static/css/estilos.css">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/estilos.css')}}">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Asegúrate de tener SweetAlert2 -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Asegúrate de tener jQuery -->
 </head>
@@ -13,7 +13,7 @@
 <body>
   <div class="background"></div>
   <div class="card">
-    <img class="logo" src="images.png" alt="Logo">
+    <img class="logo" src="{{url_for('static', filename='img/logo-img.jpg')}}" alt="Logo">
     <h4>¡Bienvenidos!</h4>
     <form class="form" id="loginForm">
       <input type="email" id="correo" name="correo" placeholder="Correo electrónico" required>
@@ -23,7 +23,7 @@
 
     <footer>
       ¿No tienes una cuenta?
-      <a href="registrarse.html">Regístrate aquí</a>
+      <a href="{{ url_for('registrarse') }}">Regístrate aquí</a>
     </footer>
   </div>
 

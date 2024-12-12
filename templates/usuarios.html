@@ -15,11 +15,11 @@
 	<link rel="canonical" href="https://demo-basic.adminkit.io/lugares.html" />
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/static/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link href="static/css/estilo.css" rel="stylesheet">
-
+    <link href="{{url_for('static', filename='css/estilo.css')}}" rel="stylesheet">
+	
 	<title>Blank Page | AdminKit Demo</title>
 
-	<link href="static/css/app.css" rel="stylesheet">
+	<link href="{{url_for('static', filename='css/app.css')}}" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 
@@ -30,72 +30,43 @@
 	<div class="wrapper">
 		<nav id="sidebar" class="sidebar js-sidebar">
 			<div class="sidebar-content js-simplebar">
-				<a class="sidebar-brand" href="index.html">
-          <span class="align-middle">AdminKit</span>
+				<a class="sidebar-brand" href="{{ url_for('lugares') }}">
+          <span class="align-middle">Administrador</span>
         </a>
 
 				<ul class="sidebar-nav">
 					<li class="sidebar-header">
-						Pages
+						Apartados
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="index.html">
-              <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
-            </a>
-					</li>
-
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="perfil.html">
-              <i class="align-middle" data-feather="user"></i> <span class="align-middle">Profile</span>
-            </a>
-					</li>
-
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="sesion.html">
-              <i class="align-middle" data-feather="log-in"></i> <span class="align-middle">Sign In</span>
-            </a>
-					</li>
-
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="sesion.html">
-              <i class="align-middle" data-feather="user-plus"></i> <span class="align-middle">Sign Up</span>
-            </a>
-					</li>
-
-                    <li class="sidebar-item">
-						<a class="sidebar-link" href="lugares.html">
+						<a class="sidebar-link" href="{{ url_for('lugares') }}">
               <i class="align-middle" data-feather="book"></i> <span class="align-middle">Lugares</span>
             </a>
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="imagenes.html">
-              <i class="align-middle" data-feather="book"></i> <span class="align-middle">Imagenes</span>
+						<a class="sidebar-link" href="{{ url_for('sesion') }}">
+              <i class="align-middle" data-feather="log-in"></i> <span class="align-middle">Iniciar sesión</span>
+            </a>
+					</li>    
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ url_for('registrarse') }}">
+              <i class="align-middle" data-feather="user-plus"></i> <span class="align-middle">registrarse</span>
             </a>
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="usuarios.html">
+						<a class="sidebar-link" href="{{ url_for('imagenes') }}">
+              <i class="align-middle" data-feather="book"></i> <span class="align-middle">CRUD imagenes</span>
+            </a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ url_for('usuarios') }}">
               <i class="align-middle" data-feather="book"></i> <span class="align-middle">Usuarios</span>
             </a>
-					
-
-					<li class="sidebar-header">
-						Plugins & Addons
-					</li>
-
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="charts-chartjs.html">
-              <i class="align-middle" data-feather="bar-chart-2"></i> <span class="align-middle">Charts</span>
-            </a>
-					</li>
-
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="maps-google.html">
-              <i class="align-middle" data-feather="map"></i> <span class="align-middle">Maps</span>
-            </a>
-					</li>
 				</ul>
 
 			
@@ -247,30 +218,38 @@
               </a>
 
 							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-                <img src="static/img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark">Charles Hall</span>
+                <img src="{{url_for('static', filename='img/logo-img.jpg')}}" class="avatar img-fluid rounded me-1" alt="Encanto Mixteco" /> <span class="text-dark">Encanto Mixteco</span>
               </a>
-							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item" href="perfil.html"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
-								<a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="pie-chart"></i> Analytics</a>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="index.html"><i class="align-middle me-1" data-feather="settings"></i> Settings & Privacy</a>
-								<a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="help-circle"></i> Help Center</a>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="#">Log out</a>
-							</div>
 						</li>
 					</ul>
 				</div>
 			</nav>
-<!-- CRUD usuarios -->
-<body>
+
+	<!-- CRUD usuarios -->		
+  <body>
     <div class="container py-5">
         <h2>Catálogo de Usuarios</h2>
         <p>Administra los usuarios del sistema</p>
 
-        <!-- Botón para mostrar el formulario de agregar usuario -->
-        <button id="btn-agregar" class="btn btn-primary mb-4">Agregar Usuario</button>
-
+        <!-- Tabla de usuarios -->
+        <table class="table table-striped table-bordered">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Contraseña</th>
+                    <th>Estatus</th>
+                    <th>Última Modificación</th>
+                    <th>Usuario Mod.</th>
+                    <th>Fecha Mov.</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-usuarios"></tbody>
+        </table>
+		
         <!-- Formulario para agregar usuarios -->
         <form id="form-usuario" class="mb-4" style="display: none;">
             <h4>Añadir Usuario</h4>
@@ -323,26 +302,21 @@
             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
             <button type="button" id="cancelar-editar" class="btn btn-secondary">Cancelar</button>
         </form>
+			<!-- Botón para mostrar el formulario de agregar usuario -->
+	<button id="btn-agregar" class="btn btn-primary mb-4">Agregar Usuario</button>
+	</div>
+  
 
-        <!-- Tabla de usuarios -->
-        <table class="table table-striped table-bordered">
-            <thead class="bg-primary text-white">
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Contraseña</th>
-                    <th>Estatus</th>
-                    <th>Última Modificación</th>
-                    <th>Usuario Mod.</th>
-                    <th>Fecha Mov.</th>
-                    <th>Rol</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="tabla-usuarios"></tbody>
-        </table>
-    </div>
+			<footer class="footer">
+				<div class="container-fluid">
+				</div>
+			</footer>
+		</div>
+	</div>
+
+
+
+<body>
 
     <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -469,8 +443,11 @@
     });
     </script>
 </body>
-	
-	<script src="static/js/app.js"></script>
+
+<script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
+	<script src="{{url_for('static', filename='js/app.js')}}"></script>
 
 </body>
 

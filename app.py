@@ -10,32 +10,33 @@ app = Flask(__name__)
 
 # Ruta principal (home)
 @app.route('/')
-def home():
-    return render_template("index.html")
+def inicio():
+    return render_template("sesion.html")
 
-@app.route('/index.html')
-def index():
-    return render_template("index.html")
+#condicion para ingresar a una pagina o a la otra agregala aquí
+
 
 # Ruta para la página de usuarios
-@app.route('/usuarios.html')
+@app.route('/usuarios')
 def usuarios():
     return render_template('usuarios.html')
 
 # Ruta para la página de lugares
-@app.route('/lugares.html')
+@app.route('/lugares')
 def lugares():
     return render_template("lugares.html")
 
-@app.route('/imagenes.html')
+@app.route('/imagenes')
 def imagenes():
     return render_template("imagenes.html")
 
-@app.route('/perfil.html')
-def perfil():
-    return render_template("perfil.html")
 
-@app.route('/sesion.html')
+
+#@app.route('/perfil.html')
+#def perfil():
+#    return render_template("perfil.html")
+
+@app.route('/sesion')
 def sesion():
     return render_template("sesion.html")
 
