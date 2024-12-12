@@ -7,6 +7,8 @@
   <title>Registrar Cuenta</title>
   <link rel="stylesheet" href="/static/css/estilos.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- SweetAlert -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -28,47 +30,55 @@
     </footer>
   </div>
 
-  <!-- Mostrar mensajes flash -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <ul>
-        {% for category, message in messages %}
-          <li class="{{ category }}">{{ message }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
-
   <script>
-    // Enviar formulario con AJAX
-    $('#registerForm').on('submit', function(e) {
-      e.preventDefault();  // Evita el envío normal del formulario
+    $(document).ready(function() {
+      $('#registerForm').submit(function(event) {
+        event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
-      var nombre = $('#nombre').val();
-      var correo = $('#correo').val();
-      var contrasena = $('#contrasena').val();
+        var nombre = $('#nombre').val();
+        var correo = $('#correo').val();
+        var contrasena = $('#contrasena').val();
 
-      // Hacer la petición POST a Flask para registrar al usuario
-      $.ajax({
-        url: '/registrarse',  // URL de la API Flask para registro
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ nombre: nombre, correo: correo, contrasena: contrasena }),
-        success: function(response) {
-          if (response.status === 'success') {
-            alert('Usuario registrado correctamente');
-            window.location.href = '/sesion.html';  // Redirige a la página de login
-          } else {
-            alert('Error: ' + response.message);
+        $.ajax({
+          url: '/registrarse.html',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            nombre: nombre,
+            correo: correo,
+            contrasena: contrasena
+          }),
+          success: function(response) {
+            if (response.status === 'success') {
+              Swal.fire({
+                icon: 'success',
+                title: '¡Registro exitoso!',
+                text: 'Por favor, inicia sesión.',
+                confirmButtonText: 'Aceptar'
+              }).then(() => {
+                window.location.href = '/sesion.html'; // Redirige a la página de inicio de sesión
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: response.message,
+                confirmButtonText: 'Aceptar'
+              });
+            }
+          },
+          error: function(xhr, status, error) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Hubo un error',
+              text: error,
+              confirmButtonText: 'Aceptar'
+            });
           }
-        },
-        error: function() {
-          alert('Error en la conexión');
-        }
+        });
       });
     });
   </script>
-
 </body>
 
 </html>

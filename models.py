@@ -1,5 +1,5 @@
-from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy()
 
@@ -7,20 +7,22 @@ class Usuario(db.Model):
     __tablename__ = 'usuarios'
     id_usuario = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nom_usuario = db.Column(db.String(50), nullable=False)
-    correo = db.Column(db.String(100), nullable=False, unique=True)
-    contrasena = db.Column(db.String(11), nullable=False)
-    estatus = db.Column(db.Integer, default=1)  
-    usu_mod = db.Column(db.String(50))
-    ult_mod = db.Column(db.String(50))
-    fecha_mov = db.Column(db.Date)
-    id_rol = db.Column(db.Integer, nullable=False)
+    correo = db.Column(db.String(50), nullable=False, unique=True)
+    contrasena = db.Column(db.String(100), nullable=False)
+    estatus = db.Column(db.Integer, nullable=False)
+    usu_mod = db.Column(db.String(50), nullable=False)
+    ult_mod = db.Column(db.String(50), nullable=False)
+    fecha_mov = db.Column(db.Date, nullable=False)
+    id_rol = db.Column(db.Integer, db.ForeignKey('roles.id_rol'), nullable=False)
 
-class Nivelusuario(db.Model):
-    __tablename__ = 'niveles'
+    rol = db.relationship('Rol', backref=db.backref('usuarios', lazy=True))
 
-    id_nivel = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nivel = db.Column(db.String(50), nullable=False)
-
-    def __repr__(self):
-        return f'<Nivelusuario {self.nivel}>'
+class Rol(db.Model):
+    __tablename__ = 'roles'
+    id_rol = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nom_rol = db.Column(db.Enum('Administrador', 'Usuario'), nullable=False)
+    estatus = db.Column(db.Integer, nullable=False)
+    usu_mod = db.Column(db.String(50), nullable=False)
+    ult_mod = db.Column(db.String(50), nullable=False)
+    fecha_mov = db.Column(db.Date, nullable=False)
 
