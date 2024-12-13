@@ -93,12 +93,18 @@ def authenticate():
     
     return jsonify({"status": "error", "message": "Correo o contraseña incorrectos"}), 401
 
+#authenticación paea mandarte de una pagina a otra
 
 # Dashboard protegido
-@app.route('/index.html')
+@app.route('/registro')
 @login_required
 def dashboard():
-    return render_template('index.html', usuario=session['correo'], rol=session['rol'])
+    #return render_template('index.html', usuario=session['correo'], rol=session['rol'])
+    rol = session['rol']
+    if rol == 'admin':
+       return redirect(url_for('lugares'))
+    else:
+       return redirect(url_for('index'))
 
 # Cerrar sesión
 @app.route('/logout')
@@ -107,7 +113,7 @@ def logout():
     flash("Has cerrado sesión correctamente.", "success")
     return redirect(url_for('login'))
 
-# Ruta para la página de usuarios
+# Ruta para el apartado de usuarios
 @app.route('/usuarios.html')
 @login_required
 def usuarios():
@@ -128,6 +134,9 @@ def imagenes():
 @login_required
 def perfil():
     return render_template("perfil.html", usuario=session['correo'], rol=session['rol'])
+
+
+
 
 
 # APIs para lugares
@@ -213,6 +222,36 @@ def delete_lugar(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+    
+
+#carga de apartados en la página de usurios
+
+@app.route('/index')
+def home():
+    return render_template("index.html")
+#pagina de servicios
+
+@app.route('/servicios')
+def servicios():
+    return render_template("servicios.html")
+
+@app.route('/about')
+def galeria():
+    return render_template("galeria.html")
+
+
+@app.route('/portfolio')
+def portfolio():
+    return render_template("portfolio.html")
+
+#vuelve a redirigirte al index de usuario
+
+@app.route('/index')
+def index():
+    return render_template("index.html")
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
