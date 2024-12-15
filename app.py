@@ -21,7 +21,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-# Crear las tablas si no existen
+# Crear las tablas si no existen        
 with app.app_context():
     db.create_all()
 

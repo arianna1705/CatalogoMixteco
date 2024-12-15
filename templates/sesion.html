@@ -14,7 +14,7 @@
 <body>
   <div class="background"></div>
   <div class="card">
-    <img class="logo" src="images.png" alt="Logo">
+    <img class="logo" src="{{url_for('static', filename='img/logo-img.jpg')}} alt="Logo">
     <h4>¡Bienvenido de nuevo!</h4>
     <!-- Formulario de inicio de sesión -->
     <form id="loginForm">
@@ -25,7 +25,7 @@
 
     <footer>
       ¿No tienes cuenta?
-      <a href="registrarse.html">Regístrate aquí</a>
+      <a href="{{ url_for('registrarse') }}">Regístrate aquí</a>
     </footer>
   </div>
 
