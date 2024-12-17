@@ -18,7 +18,6 @@
 	<link href="{{url_for('static', filename='css/app.css')}}" rel="stylesheet">
 
 	<title>Blank Page | AdminKit Demo</title>
-<link href="{{url_for('static', filename='css/app.css')}}" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 	
@@ -39,26 +38,26 @@
 					</li>
 
 					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ url_for('logout') }}">
+              <i class="align-middle" data-feather="log-in"></i> <span class="align-middle">Cerrar sesión</span>
+            </a>
+					</li>    
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ url_for('show_login_page') }}">
+              <i class="align-middle" data-feather="user-plus"></i> <span class="align-middle">Iniciar Sesión</span>
+            </a>
+					</li>
+
+					<li class="sidebar-item">
 						<a class="sidebar-link" href="{{ url_for('lugares') }}">
               <i class="align-middle" data-feather="book"></i> <span class="align-middle">Lugares</span>
             </a>
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{ url_for('sesion') }}">
-              <i class="align-middle" data-feather="log-in"></i> <span class="align-middle">Iniciar sesión</span>
-            </a>
-					</li>    
-
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{ url_for('registrarse') }}">
-              <i class="align-middle" data-feather="user-plus"></i> <span class="align-middle">registrarse</span>
-            </a>
-					</li>
-
-					<li class="sidebar-item">
 						<a class="sidebar-link" href="{{ url_for('imagenes') }}">
-              <i class="align-middle" data-feather="book"></i> <span class="align-middle">CRUD imagenes</span>
+              <i class="align-middle" data-feather="book"></i> <span class="align-middle">Imagenes</span>
             </a>
 					</li>
 
@@ -224,104 +223,212 @@
 				</div>
 			</nav>
 
-			
-  <!-- Crud de lugares -->
-  <body>
-	  <div class="container py-5">
-		  <h2>Catálogo CRUD</h2>
-		  <p>Administra los lugares turísticos</p>
-  
-		  <table class="table table-striped table-bordered">
-			  <thead class="bg-primary text-white">
-				  <tr>
-					  <th>ID</th>
-					  <th>Nombre</th>
-					  <th>Descripción</th>
-					  <th>Ubicación</th>
-					  <th>Acciones</th>
-				  </tr>
-			  </thead>
-			  <tbody id="tabla-lugares"></tbody>
-		  </table>
-  
-		  <form id="form-lugar">
-			  <h4>Añadir Lugar Turístico</h4>
-			  <div class="mb-3">
-				  <label for="nom_lugar">Nombre</label>
-				  <input type="text" id="nom_lugar" class="form-control">
-			  </div>
-			  <div class="mb-3">
-				  <label for="descripcion">Descripción</label>
-				  <input type="text" id="descripcion" class="form-control">
-			  </div>
-			  <div class="mb-3">
-				  <label for="ubicacion">Ubicación</label>
-				  <input type="text" id="ubicacion" class="form-control">
-			  </div>
-			  <button type="submit" class="btn btn-success">Agregar</button>
-		  </form>
-	  </div>
-  
-	
-			<footer class="footer">
-				<div class="container-fluid">
-				</div>
-			</footer>
-		</div>
-	</div>
+<!-- CRUD DE LUGARES -->
+<div class="container py-5">
+    <h2>Catálogo de Lugares Turísticos</h2>
+    <p>Administra los lugares turísticos</p>
 
-	<script src="{{url_for('static', filename='js/app.js')}}"></script>
-	<!-- Script con AJAX -->
-	<script>
-		document.addEventListener("DOMContentLoaded", () => {
-			const tablaLugares = document.getElementById("tabla-lugares");
-			const formLugar = document.getElementById("form-lugar");
+    <!-- Botón para abrir el SweetAlert -->
+    <button class="btn btn-primary mb-3" id="btn-agregar-lugar">
+        Agregar Lugar
+    </button>
 
-			// Cargar lugares
-			fetch('/api/lugares')
-				.then(res => res.json())
-				.then(data => {
-					data.forEach(lugar => {
-						const fila = `
-							<tr>
-								<td>${lugar.id_lugar}</td>
-								<td>${lugar.nom_lugar}</td>
-								<td>${lugar.descripcion}</td>
-								<td>${lugar.ubicacion}</td>
-								<td>
-									<button class="btn btn-warning btn-sm">Editar</button>
-									<button class="btn btn-danger btn-sm">Eliminar</button>
-								</td>
-							</tr>
-						`;
-						tablaLugares.innerHTML += fila;
-					});
-				});
+    <!-- Tabla de lugares -->
+    <table class="table table-striped table-bordered">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Ubicación</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tabla-lugares"></tbody>
+    </table>
+</div>
 
-			// Agregar lugar
-			formLugar.addEventListener("submit", e => {
-				e.preventDefault();
-				const nuevoLugar = {
-					nom_lugar: document.getElementById("nom_lugar").value,
-					descripcion: document.getElementById("descripcion").value,
-					ubicacion: document.getElementById("ubicacion").value,
-					usu_mod: "admin"
-				};
+<footer class="footer">
+    <div class="container-fluid"></div>
+</footer>
 
-				fetch('/api/lugares', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(nuevoLugar)
-				})
-				.then(res => res.json())
-				.then(data => {
-					alert(data.message);
-					location.reload(); 
-				})
-				.catch(err => console.error(err));
-			});
-		});
-	</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const tablaLugares = document.getElementById("tabla-lugares");
+
+        // Cargar lugares
+        fetch('/api/lugares')
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(lugar => {
+                    const fila = `
+                        <tr>
+                            <td>${lugar.id_lugar}</td>
+                            <td>${lugar.nom_lugar}</td>
+                            <td>${lugar.descripcion}</td>
+                            <td>${lugar.ubicacion}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editarLugar(${lugar.id_lugar})">Editar</button>
+                                <button class="btn btn-danger btn-sm" onclick="eliminarLugar(${lugar.id_lugar})">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                    tablaLugares.innerHTML += fila;
+                });
+            });
+
+
+			// Botón para abrir SweetAlert con formulario para agregar un nuevo lugar
+document.getElementById("btn-agregar-lugar").addEventListener("click", () => {
+    Swal.fire({
+        title: 'Agregar Lugar Turístico',
+        html: `
+            <input type="text" id="nom_lugar" class="swal2-input" placeholder="Nombre" required>
+            <input type="text" id="descripcion" class="swal2-input" placeholder="Descripción" required>
+            <input type="text" id="ubicacion" class="swal2-input" placeholder="Ubicación" required>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Guardar',
+        cancelButtonText: 'Cancelar',
+        preConfirm: () => {
+            const nom_lugar = document.getElementById('nom_lugar').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const ubicacion = document.getElementById('ubicacion').value;
+
+            if (!nom_lugar || !descripcion || !ubicacion) {
+                Swal.showValidationMessage('Por favor, rellena todos los campos');
+                return false;
+            }
+
+            return { nom_lugar, descripcion, ubicacion };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const nuevoLugar = {
+                nom_lugar: result.value.nom_lugar,
+                descripcion: result.value.descripcion,
+                ubicacion: result.value.ubicacion,
+                estatus: 1,
+                usu_mod: "admin",
+                ult_mod: "Creación",
+                fecha_mov: new Date().toISOString().split('T')[0]
+            };
+
+            // Enviar datos a la API para agregar el nuevo lugar
+            fetch('/api/lugares', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(nuevoLugar)
+            })
+            .then(res => res.json())
+            .then(data => {
+                Swal.fire('¡Guardado!', data.message, 'success');
+                location.reload();
+            })
+            .catch(err => {
+                console.error(err);
+                Swal.fire('Error', 'No se pudo agregar el lugar', 'error');
+            });
+        }
+    });
+});
+
+        // Función para editar lugar - GLOBAL
+        window.editarLugar = (id) => {
+            fetch(`/api/lugares/${id}`)
+                .then(res => res.json())
+                .then(lugar => {
+                    // Mostrar formulario SweetAlert con valores precargados
+                    Swal.fire({
+                        title: 'Editar Lugar Turístico',
+                        html: `
+                            <input type="text" id="nom_lugar" class="swal2-input" value="${lugar.nom_lugar}" placeholder="Nombre">
+                            <input type="text" id="descripcion" class="swal2-input" value="${lugar.descripcion}" placeholder="Descripción">
+                            <input type="text" id="ubicacion" class="swal2-input" value="${lugar.ubicacion}" placeholder="Ubicación">
+                        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Guardar',
+                        cancelButtonText: 'Cancelar',
+                        preConfirm: () => {
+                            const nom_lugar = document.getElementById('nom_lugar').value;
+                            const descripcion = document.getElementById('descripcion').value;
+                            const ubicacion = document.getElementById('ubicacion').value;
+
+                            if (!nom_lugar || !descripcion || !ubicacion) {
+                                Swal.showValidationMessage('Por favor, rellena todos los campos');
+                                return false;
+                            }
+
+                            return { nom_lugar, descripcion, ubicacion };
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const lugarActualizado = {
+                                nom_lugar: result.value.nom_lugar,
+                                descripcion: result.value.descripcion,
+                                ubicacion: result.value.ubicacion,
+                                estatus: 1,
+                                usu_mod: "admin",
+                                ult_mod: "Edición",
+                                fecha_mov: new Date().toISOString().split('T')[0]
+                            };
+
+                            // Enviar actualización a la API
+                            fetch(`/api/lugares/${id}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(lugarActualizado)
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                Swal.fire('¡Actualizado!', data.message, 'success');
+                                location.reload();
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                Swal.fire('Error', 'No se pudo actualizar el lugar', 'error');
+                            });
+                        }
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    Swal.fire('Error', 'No se pudo cargar el lugar', 'error');
+                });
+        };
+
+        // Función para eliminar lugar
+        window.eliminarLugar = (id) => {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "No podrás revertir esta acción",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/api/lugares/${id}`, { method: 'DELETE' })
+                        .then(res => res.json())
+                        .then(data => {
+                            Swal.fire('¡Eliminado!', data.message, 'success');
+                            location.reload();
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            Swal.fire('Error', 'No se pudo eliminar el lugar', 'error');
+                        });
+                }
+            });
+        };
+    });
+</script>
+
+<!-- Scripts necesarios -->
+<script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 

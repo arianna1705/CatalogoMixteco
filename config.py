@@ -1,18 +1,15 @@
-from sqlalchemy import create_engine
+import os
+from flask_sqlalchemy import SQLAlchemy
 
-try:
-    # Crear el motor de conexión
-    engine = create_engine('mysql+pymysql://root:@localhost/catalogo')
-    
-    # Intentar conectarse a la base de datos
-    connection = engine.connect()
-    
-    print("Conexión exitosa a la base de datos")
-    
-except Exception as e:
-    print(f"Error de conexión: {e}")
-    
-finally:
-    # Asegúrate de cerrar la conexión
-    if connection:
-        connection.close()
+# Configuración de la base de datos
+class Config:
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:@localhost/catalogo'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False  # 
+    SECRET_KEY = 'catamixteco123'
+
+# Inicialización de SQLAlchemy
+db = SQLAlchemy()
+
+def init_app(app):
+    app.config.from_object(Config)
+    db.init_app(app)

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cerrar Sesión</title>
+  <link rel="stylesheet" href="/static/css/estilos.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- SweetAlert -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+  <div class="background"></div>
+  <div class="card">
+    <img class="logo" src="images.png" alt="Logo">
+    <h4>Estás a punto de cerrar sesión</h4>
+    <button id="logoutBtn">Cerrar Sesión</button>
+  </div>
+
+  <script>
+$(document).ready(function() {
+  $('#logoutBtn').click(function() {
+    $.ajax({
+      url: '/logout',  // URL del endpoint de cierre de sesión
+      type: 'POST',    // Asegúrate de usar el método POST
+      success: function(response) {
+        if (response.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: '¡Cierre de sesión exitoso!',
+            text: 'Has cerrado sesión correctamente.',
+            confirmButtonText: 'Aceptar'
+          }).then(() => {
+            window.location.href = '/';  // Redirige a la página de inicio
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.message,
+            confirmButtonText: 'Aceptar'
+          });
+        }
+      },
+      error: function(xhr, status, error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Hubo un error',
+          text: error,
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
+  });
+});
+
+  </script>
+</body>
+
+</html>

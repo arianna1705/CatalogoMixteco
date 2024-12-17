@@ -26,7 +26,8 @@
 
     <footer>
       ¿Ya tienes cuenta?
-      <a href="sesion.html">Inicia sesión aquí</a>
+      <a href="{{ url_for('show_login_page') }}">Inicia sesion aquí</a>
+
     </footer>
   </div>
 
@@ -40,14 +41,15 @@
         var contrasena = $('#contrasena').val();
 
         $.ajax({
-          url: '/registrarse.html',
-          type: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify({
-            nombre: nombre,
-            correo: correo,
-            contrasena: contrasena
-          }),
+         url: '/register', 
+         type: 'POST',
+         contentType: 'application/json',
+         data: JSON.stringify({
+         nombre: nombre,
+         correo: correo,
+         contrasena: contrasena
+        }),
+ 
           success: function(response) {
             if (response.status === 'success') {
               Swal.fire({
@@ -56,7 +58,7 @@
                 text: 'Por favor, inicia sesión.',
                 confirmButtonText: 'Aceptar'
               }).then(() => {
-                window.location.href = '/sesion.html'; // Redirige a la página de inicio de sesión
+                window.location.href = '/sesion'; // Redirige a la página de index de sesión
               });
             } else {
               Swal.fire({

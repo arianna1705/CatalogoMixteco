@@ -14,68 +14,54 @@
 <body>
   <div class="background"></div>
   <div class="card">
-    <img class="logo" src="{{url_for('static', filename='img/logo-img.jpg')}} alt="Logo">
+    <img class="logo" src="{{ url_for('static', filename='img/logo-img.jpg') }}" alt="Logo">
     <h4>¡Bienvenido de nuevo!</h4>
     <!-- Formulario de inicio de sesión -->
-    <form id="loginForm">
-      <input type="email" id="correo" name="correo" placeholder="Correo electrónico" required>
+    <form id="loginForm" onsubmit="return Inicio_sesion()">
+      <input type="text" id="correo" name="correo" placeholder="Correo" required>
       <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña" required>
       <button type="submit">Iniciar sesión</button>
     </form>
+  
+<footer>
+  ¿No tienes cuenta?
+  <a href="{{ url_for('show_register_page') }}">Regístrate aquí</a>
 
-    <footer>
-      ¿No tienes cuenta?
-      <a href="{{ url_for('registrarse') }}">Regístrate aquí</a>
-    </footer>
-  </div>
+</footer>
+</div>
 
-  <script>
-    $(document).ready(function() {
-      $('#loginForm').submit(function(event) {
-        event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
-
-        var correo = $('#correo').val();
-        var contrasena = $('#contrasena').val();
-
+    <script>
+      function Inicio_sesion(){
         $.ajax({
           url: '/authenticate',
           type: 'POST',
           contentType: 'application/json',
+          dataType: 'json',
           data: JSON.stringify({
-            correo: correo,
-            contrasena: contrasena
+            correo: $('#correo').val(),
+            contrasena: $('#contrasena').val()
           }),
-          success: function(response) {
-            if (response.status === 'success') {
-              Swal.fire({
-                icon: 'success',
-                title: '¡Bienvenido!',
-                text: 'Inicio de sesión exitoso.',
-                confirmButtonText: 'Aceptar'
-              }).then(() => {
-                window.location.href = '/index.html'; // Redirige al dashboard
-              });
+          success: function(data){
+            if(data.status === 'success'){
+                Swal.fire('Éxito', data.message, 'success');
+                if(data.id_rol == 1){
+                    window.location.href = '/lugares'; 
+                } else if(data.id_rol == 2){
+                    window.location.href = '/index';  
+                } else {
+                    window.location.href = '/';
+                }
             } else {
-              Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: response.message,
-                confirmButtonText: 'Aceptar'
-              });
+                Swal.fire('Error', data.message, 'error');
             }
-          },
-          error: function(xhr, status, error) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Hubo un error',
-              text: error,
-              confirmButtonText: 'Aceptar'
-            });
+        },
+          error: function(xhr, status, error){
+            console.error("Error en la solicitud: ", error);
+            Swal.fire('Error', "Ocurrio un error con el servidor, intentelo mas tarde", 'error');
           }
         });
-      });
-    });
-  </script>
+        return false;
+      };
+    </script>
 </body>
-
 </html>
